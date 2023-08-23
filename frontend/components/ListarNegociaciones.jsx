@@ -117,7 +117,7 @@ const ListarNegociaciones = () => {
                                     <tr>
                                         <th scope="col">Cliente</th>
                                         <th scope="col">Factura</th>
-                                        <th scope="col" style={{ textAlign: 'center' }}>Productos</th>
+                                        {/* <th scope="col" style={{ textAlign: 'center' }}>Productos</th> */}
                                         <th scope="col">Cuotas</th>
                                         <th scope="col">Fecha Fin Gracia</th>
                                         <th scope="col">Total</th>

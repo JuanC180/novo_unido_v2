@@ -176,6 +176,7 @@ const enviarNotificacion = async () => {
                     try {
                         // console.log( " YA TIENE 5 DIAS")
                         const clio = await obtenerCliente(result.clienteData)
+                        
                         // console.log(clio)
                         // console.log("====")
 
@@ -216,7 +217,7 @@ const enviarAlertaEmail = async (req, res) => {
 
     const datosCliente = await obtenerCliente(negociacion.clienteData)
 
-// console.log(datosCliente)
+// console.log(negociacion)
 
     datosNegociacion.forEach(datosNego => {
 
