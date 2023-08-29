@@ -228,8 +228,9 @@ const enviarAlertaEmail = async (req, res) => {
 
         fecha.toDateString()
 
-        const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
-        const fechaTexto = fecha.toLocaleDateString('es-ES', options)
+        // const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }; // forma larga 
+        const options = { day: 'numeric', month: 'short',  year: '2-digit' }; // forma corta
+        const fechaTexto = fecha.toLocaleDateString('es-ES', options).replace('.', '')
         console.log(fechaTexto)
         
         enviarAlertaEmailCliente({negociacion, valorFormateado, fechaTexto, datosCliente})

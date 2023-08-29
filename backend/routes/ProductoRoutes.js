@@ -1,5 +1,5 @@
 const express = require('express');
-const { registrarProducto, obtenerProductos, obtenerDataProductos, actualizarProducto, eliminarProducto, actualizarEstadoProducto } = require('../controllers/ProductoControllers');
+const { registrarProducto, obtenerProductos, obtenerDataProductos, actualizarProducto, eliminarProducto, actualizarEstadoProducto, obtenerImagen } = require('../controllers/ProductoControllers');
 const router = express.Router();
 
 //Agregar producto
@@ -18,5 +18,7 @@ router.put('/actualizarProducto/:id', actualizarProducto);
 router.delete('/eliminarproducto/:id', eliminarProducto);
 
 router.put('/actualizar-estado/:id', actualizarEstadoProducto);
+
+router.get('/obtener-imagen-producto/:id', obtenerImagen);
 
 module.exports = router;
