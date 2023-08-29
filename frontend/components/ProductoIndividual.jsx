@@ -48,11 +48,11 @@ const ProductoIndividual = ({ producto }) => {
     return <div>No se ha proporcionado un producto válido</div>;
   }
 
-const tieneNegociacionesActivas = () => {
-  return datanegociaciones.some((negociacion) => {
-    return negociacion.estado === 'Activo' && negociacion.tipoMaquina.includes(producto.nombre);
-  });
-};
+  const tieneNegociacionesActivas = () => {
+    return datanegociaciones.some((negociacion) => {
+      return negociacion.estado === 'Activo' && negociacion.tipoMaquina.includes(producto.nombre);
+    });
+  };
 
   useEffect(() => {
     setIsActivated(estado === 'Activo');
@@ -106,6 +106,8 @@ const tieneNegociacionesActivas = () => {
               closeModal: true
             }
           }
+        }).then(() => {
+          window.location.reload();
         });
       })
       .catch(error => {
@@ -136,8 +138,39 @@ const tieneNegociacionesActivas = () => {
         <Link onClick={toggleDetalles} >
           <i className="fa fa-circle-info" title="Detalle" style={{ marginRight: 10, color: '#212529', fontSize: 22 }} />
         </Link>
-        <Link to={`/admin/editarproducto/${producto._id}`}>
+        {/* <Link to={`/admin/editarproducto/${producto._id}`}>
           <i className="fa fa-pencil" title="Editar" style={{ marginRight: 10, color: '#212529', fontSize: 22 }} />
+        </Link> */}
+        <Link to={`/admin/editarproducto/${producto._id}`}>
+          <i
+            className="fa fa-pencil"
+            title="Editar"
+            style={{
+              marginRight: 10,
+              color: producto.estado === 'Activo' ? '#212529' : 'gray',
+              fontSize: 22,
+              cursor: producto.estado === 'Activo' ? 'pointer' : 'not-allowed',
+            }}
+            onClick={event => {
+              if (producto.estado !== 'Activo') {
+                event.preventDefault();
+                swal({
+                  title: "Producto inactivo",
+                  text: "No se puede editar un producto inactivo.",
+                  icon: "warning",
+                  buttons: {
+                    accept: {
+                      text: "Aceptar",
+                      value: true,
+                      visible: true,
+                      className: "btn-danger",
+                      closeModal: true
+                    }
+                  }
+                });
+              }
+            }}
+          />
         </Link>
         <Link onClick={toggleActivation}>
           <FaToggleOn

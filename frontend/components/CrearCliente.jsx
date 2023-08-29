@@ -146,7 +146,7 @@ const CrearCliente = () => {
       telefonoCodeudorError
     ) {
       swal({
-        title: "Longitudes incorrectas",
+        title: "Datos incorrectos",
         text: "Verifica los campos marcados en rojo",
         icon: "error",
         button: "Aceptar"
@@ -287,6 +287,7 @@ const CrearCliente = () => {
                     id="email"
                     aria-describedby="emailHelp"
                     placeholder="Email"
+                    maxLength={60}
                     required
                     value={email}
                     onChange={handleEmailChange}

@@ -49,26 +49,22 @@ const Registrar = () => {
     e.preventDefault()
 
     if ([email, nombre, apellido, password, repetirPassword].includes('')) {
-      setAlerta({ msg: "Campos vacios", error: true });
+      setAlerta({ msg: "Campos vacíos", error: true });
       return;
     }
 
-    if (password !== repetirPassword) {
-      // console.log("Los password no son iguales")
-      setAlerta({ msg: "Los password no coinciden", error: true });
-      return
-    }
-
-    if (password.length < 8) {
-      // console.log('El password es muy corto')
-      setAlerta({ msg: "El password debe tener más de 8 caracteres", error: true });
-      return
-    }
-
-    if (password.length > 25) {
-      // console.log('El password debe tener menos 25 caracteres')
-      setAlerta({ msg: "El password debe tener 25 o más caracteres", error: true });
-      return
+    if (
+      nombreError ||
+      apellidoError ||
+      emailError
+    ) {
+      swal({
+        title: "Datos incorrectos",
+        text: "Verifica los campos marcados en rojo",
+        icon: "error",
+        button: "Aceptar"
+      });
+      return;
     }
 
     setAlerta({})
@@ -184,6 +180,7 @@ const Registrar = () => {
                     aria-describedby="emailHelp"
                     placeholder="Correo"
                     required
+                    maxLength={60}
                     value={email}
                     onChange={handleEmailChange}
                   />

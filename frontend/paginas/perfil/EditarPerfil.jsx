@@ -9,6 +9,9 @@ const EditarPerfil = () => {
     const { auth, actualizarPerfil } = useAuth()
     const [perfil, setPerfil] = useState({})
     const [alerta, setAlerta] = useState({})
+    const [nombreError, setNombreError] = useState(false);
+    const [apellidoError, setApellidoError] = useState(false);
+    const [emailError, setEmailError] = useState(false);
 
     const handleCancelar = () => {
         navigate('/admin'); // Regresa a la ubicación anterior
@@ -31,6 +34,20 @@ const EditarPerfil = () => {
             return
         }
 
+        if (
+            nombreError ||
+            apellidoError ||
+            emailError
+        ) {
+            swal({
+                title: "Datos incorrectos",
+                text: "Verifica los campos marcados en rojo",
+                icon: "error",
+                button: "Aceptar"
+            });
+            return;
+        }
+
         const resultado = await actualizarPerfil(perfil)
         setAlerta(resultado)
         window.location.href = '/admin/listar-usuarios';
@@ -38,6 +55,41 @@ const EditarPerfil = () => {
     }
 
     const { msg } = alerta
+
+    function validarTexto(event, setErrorState, longitudMinima) {
+        const inputText = event.target.value;
+
+        // Remover caracteres especiales y números, permitiendo solo letras y la letra "ñ" (tanto en mayúscula como en minúscula)
+        const sanitizedText = inputText.replace(/[^a-zA-ZñÑ\s]/g, '');
+
+        // Actualizar el valor del input con el texto sanitizado
+        event.target.value = sanitizedText;
+
+        // Validar longitud mínima
+        if (sanitizedText.length < longitudMinima) {
+            setErrorState(true);
+        } else {
+            setErrorState(false);
+        }
+    }
+
+    const validateEmail = (email) => {
+        // Expresión regular para validar el formato del correo
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailPattern.test(email);
+    };
+
+    const handleEmailChange = (e) => {
+        const newEmail = e.target.value;
+        setPerfil({
+            ...perfil,
+            email: newEmail  // Actualizar el email en el estado del perfil
+        });
+
+        const isValidEmail = validateEmail(newEmail);
+        setEmailError(!isValidEmail);
+    };
+
 
     return (
         <>
@@ -59,58 +111,67 @@ const EditarPerfil = () => {
                                 <label htmlFor="nombre" className="form-label fw-bold">Nombre</label>
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className={`form-control ${nombreError ? 'is-invalid' : ''}`}
                                     id="nombre"
                                     aria-describedby="emailHelp"
                                     name='nombre'
                                     placeholder="Nombre"
                                     required
+                                    maxLength={40}
+                                    onInput={(e) => validarTexto(e, setNombreError, 3)}
                                     value={perfil.nombre || ''}
                                     onChange={e => setPerfil({
                                         ...perfil,
                                         [e.target.name]: e.target.value
                                     })}
                                 />
+                                {nombreError && <div className="invalid-feedback">El nombre debe tener al menos 3 caracteres.</div>}
                             </div>
 
                             <div className="mb-3 w-100">
                                 <label htmlFor="email" className="form-label fw-bold">Correo</label>
                                 <input
                                     type="email"
-                                    className="form-control"
+                                    className={`form-control ${emailError ? 'is-invalid' : ''}`}
                                     id="email"
                                     aria-describedby="emailHelp"
                                     name='email'
                                     placeholder="Correo"
                                     required
+                                    maxLength={60}
                                     value={perfil.email || ''}
-                                    onChange={e => setPerfil({
-                                        ...perfil,
-                                        [e.target.name]: e.target.value
-                                    })}
+                                    // onChange={e => setPerfil({
+                                    //     ...perfil,
+                                    //     [e.target.name]: e.target.value
+                                    // })}
+                                    onChange={handleEmailChange}
+
                                 />
+                                {emailError && <div className="invalid-feedback">Ingrese un correo válido.</div>}
                             </div>
 
                         </div>
 
                         <div className="contenedores__div2 d-flex flex-column align-items-center me-5 me-sm-0  w-100 ">
-                        <div className="mb-3 w-100">
+                            <div className="mb-3 w-100">
                                 <label htmlFor="apellido" className="form-label fw-bold">Apellido</label>
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className={`form-control ${apellidoError ? 'is-invalid' : ''}`}
                                     id="apellido"
                                     aria-describedby="emailHelp"
                                     name='apellido'
                                     placeholder="Apellido"
                                     required
+                                    maxLength={40}
+                                    onInput={(e) => validarTexto(e, setApellidoError, 3)}
                                     value={perfil.apellido || ''}
                                     onChange={e => setPerfil({
                                         ...perfil,
                                         [e.target.name]: e.target.value
                                     })}
-
                                 />
+                                {apellidoError && <div className="invalid-feedback">El apellido debe tener al menos 3 caracteres.</div>}
                             </div>
                         </div>
                     </div>

@@ -16,6 +16,9 @@ const CambiarPassword = () => {
     passwordNuevo: '',
     passwordRepetir: ''
   })
+  const [passwordNuevaError, setPasswordNuevaError] = useState(false);
+  const [repetirPasswordNuevaError, setRepetirPasswordNuevaError] = useState(false);
+
 
   const handleCancelar = () => {
     navigate('/admin'); // Regresa a la ubicación anterior
@@ -32,35 +35,53 @@ const CambiarPassword = () => {
       return
     }
 
-    if (password.passwordNuevo.length < 8) {
-      setAlerta({
-        msg: 'El campo Password Nuevo debe tener mínimo 8 caracteres',
-        error: true
-      })
-      return
-    }
-    if (password.passwordRepetir.length < 8) {
-      setAlerta({
-        msg: 'El campo Reperir Password debe tener mínimo 8 caracteres',
-        error: true
-      })
-      return
-    }
-
-    if (password.passwordRepetir !== password.passwordNuevo) {
-      setAlerta({
-        msg: 'Los campos Password Nuevo y Repetir Password, No son Iguales',
-        error: true
-      })
-      return
+    if (
+      passwordNuevaError ||
+      repetirPasswordNuevaError ||
+      passwordActualError
+    ) {
+      swal({
+        title: "Datos incorrectos",
+        text: "Verifica los campos marcados en rojo",
+        icon: "error",
+        button: "Aceptar"
+      });
+      return;
     }
 
     const respuesta = await guardarPassword(password)
     setAlerta(respuesta)
     navigate('/admin/listar-usuarios'); // Regresa a la ubicación anterior
+    console.log(respuesta)
   }
 
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setPassword({
+      ...password,
+      [e.target.name]: e.target.value
+    })
 
+    if (newPassword.length >= 8) {
+      setPasswordNuevaError(false);
+    } else {
+      setPasswordNuevaError(true);
+    }
+  };
+
+  const handleRepetirPasswordChange = (e) => {
+    const newRepetirPassword = e.target.value;
+    setPassword({
+      ...password,
+      [e.target.name]: e.target.value
+    })
+
+    if (newRepetirPassword === password) {
+      setRepetirPasswordNuevaError(false);
+    } else {
+      setRepetirPasswordNuevaError(true);
+    }
+  }
 
   const { msg } = alerta
 
@@ -90,27 +111,28 @@ const CambiarPassword = () => {
                   name='passwordActual'
                   placeholder="Contraseña actual"
                   required
+                  maxLength={25}
                   onChange={e => setPassword({
                     ...password,
                     [e.target.name]: e.target.value
                   })}
                 />
               </div>
+
               <div className="mb-3 w-100">
                 <label htmlFor="passwordRepetir" className="form-label fw-bold">Repetir contraseña</label>
                 <input
                   type="password"
-                  className="form-control"
+                  className={`form-control ${repetirPasswordNuevaError ? 'is-invalid' : ''}`}
                   id="passwordRepetir"
                   aria-describedby="emailHelp"
                   name='passwordRepetir'
                   placeholder="Repetir contraseña"
                   required
-                  onChange={e => setPassword({
-                    ...password,
-                    [e.target.name]: e.target.value
-                  })}
+                  maxLength={25}
+                  onChange={handleRepetirPasswordChange}
                 />
+                {repetirPasswordNuevaError && <div className="invalid-feedback">Las contraseñas no coinciden.</div>}
               </div>
             </div>
 
@@ -119,18 +141,16 @@ const CambiarPassword = () => {
                 <label htmlFor="passwordNuevo" className="form-label fw-bold">Contraseña nueva</label>
                 <input
                   type="password"
-                  className="form-control"
+                  className={`form-control ${passwordNuevaError ? 'is-invalid' : ''}`}
                   id="passwordNuevo"
                   aria-describedby="emailHelp"
                   name='passwordNuevo'
                   placeholder="Contraseña nueva"
                   required
-                  onChange={e => setPassword({
-                    ...password,
-                    [e.target.name]: e.target.value
-                  })}
-
+                  maxLength={25}
+                  onChange={handlePasswordChange}
                 />
+                {passwordNuevaError && <div className="invalid-feedback">El password debe tener al menos 8 caracteres.</div>}
               </div>
             </div>
           </div>

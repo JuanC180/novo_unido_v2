@@ -174,7 +174,7 @@ const EditarCliente = () => {
       telefonoCodeudorError
     ) {
       swal({
-        title: "Longitudes incorrectas",
+        title: "Datos incorrectos",
         text: "Verifica los campos marcados en rojo",
         icon: "error",
         button: "Aceptar"
@@ -315,6 +315,7 @@ const EditarCliente = () => {
                     aria-describedby="emailHelp"
                     placeholder="Email"
                     required
+                    maxLength={60}
                     value={email}
                     onChange={handleEmailChange}
                   />

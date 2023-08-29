@@ -83,7 +83,7 @@ const EditarProducto = () => {
                 setReferencia(dataproducto.referencia)
                 setNombre(dataproducto.nombre)
                 setPrecioBase(dataproducto.precioBase)
-                setImagen(dataproducto.imagen)
+                setImagen(new File([], dataproducto.imagen)); // Creas un objeto File vacío con el nombre de archivo correcto
                 setDescripcion(dataproducto.descripcion)
             })
             .catch((err) => {
@@ -118,7 +118,7 @@ const EditarProducto = () => {
             descripcionError
         ) {
             swal({
-                title: "Longitudes incorrectas",
+                title: "Datos incorrectos",
                 text: "Verifica los campos marcados en rojo",
                 icon: "error",
                 button: "Aceptar"
@@ -266,10 +266,17 @@ const EditarProducto = () => {
                                         placeholder="Nombre"
                                         required
                                         maxLength={40}
-                                        onInput={(e) => validarTexto(e, setNombreError, 3)}
                                         value={nombre}
                                         onChange={(e) => {
-                                            setNombre(e.target.value);
+                                            const inputText = e.target.value;
+                                            const sanitizedText = inputText.replace(/[^a-zA-Z0-9ñÑ\s]/g, '');
+                                            setNombre(sanitizedText);
+
+                                            if (sanitizedText.length < 3) {
+                                                setNombreError(true);
+                                            } else {
+                                                setNombreError(false);
+                                            }
                                         }}
                                     />
                                     {nombreError && <div className="invalid-feedback">El nombre debe tener al menos 3 caracteres.</div>}

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import Modal from 'react-modal';
 import { FaCheck, FaTimes } from 'react-icons/fa';
-import { isValid, format, parseISO } from 'date-fns';
 import { FaToggleOn } from 'react-icons/fa';
+import { parseISO, format } from 'date-fns';
+import isValid from 'date-fns/isValid';
+import Modal from 'react-modal';
 
 import useNegociacion from '../hooks/useNegociacion'
 
@@ -21,7 +22,6 @@ const NegociacionIndividual = ({ negociacion }) => {
   const [showModal, setShowModal] = useState(false);
   const [showPlanPagoModal, setShowPlanPagoModal] = useState(false);
   const [cuotasPagadas, setCuotasPagadas] = useState({});
-  const [dataclientes, setDataClientes] = useState([]);
 
   // console.log(negociaciones)
 
@@ -258,7 +258,7 @@ const NegociacionIndividual = ({ negociacion }) => {
 
   const customStyles2 = {
     content: {
-      width: '700px',
+      width: '900px',
       height: '590px',
       margin: 'auto',
       borderRadius: '10px',
@@ -307,7 +307,9 @@ const NegociacionIndividual = ({ negociacion }) => {
               closeModal: true
             }
           }
-        })
+        }).then(() => {
+          window.location.reload();
+        });
       })
       .catch(error => {
         console.error('Error:', error);
@@ -328,23 +330,24 @@ const NegociacionIndividual = ({ negociacion }) => {
       });
   };
 
+  // Fecha creación
+  let fechaCreacionFormateada = '';
+  const parsedFechaCreacion = parseISO(negociacion.fechaFacturacion);
+  if (isValid(parsedFechaCreacion)) {
+    const fechaFacturacion = new Date(parsedFechaCreacion.getTime() + parsedFechaCreacion.getTimezoneOffset() * 60000); // Ajuste de zona horaria
+    fechaCreacionFormateada = format(fechaFacturacion, 'dd/MM/yyyy');
+  } else {
+    fechaCreacionFormateada = 'Fecha inválida';
+  }
+
   // Fecha fin gracia
   let fechaFormateada = '';
   if (isValid(parseISO(negociacion.fechaGracia))) {
     const fechaGracia = new Date(negociacion.fechaGracia);
-    const fechaLocal = new Date(fechaGracia.getTime() + fechaGracia.getTimezoneOffset() * 60000); // Ajuste de zona horaria
+    const fechaLocal = new Date(fechaGracia.getTime() + fechaGracia.getTimezoneOffset() * 60000);
     fechaFormateada = format(fechaLocal, 'dd/MM/yyyy');
   } else {
     fechaFormateada = 'Fecha inválida';
-  }
-
-  // Fecha creación
-  let fechaCreacionFormateada = '';
-  if (isValid(parseISO(negociacion.fechaCreacion))) {
-    const fechaCreacion = new Date(negociacion.fechaCreacion);
-    fechaCreacionFormateada = format(fechaCreacion, 'dd/MM/yyyy');
-  } else {
-    fechaCreacionFormateada = 'Fecha inválida';
   }
 
   // Cálculo de las fechas y valores del Plan de pago
@@ -359,7 +362,7 @@ const NegociacionIndividual = ({ negociacion }) => {
     const planDePago = [];
 
     let fechaPago = new Date(fechaGracia.getTime());
-    const cuatroDias = 4 * 24 * 60 * 60 * 1000;
+    const cincoDias = 5 * 24 * 60 * 60 * 1000;
 
     for (let i = 0; i < numCuotas; i++) {
       // Para la primera cuota, restar 5 días a la fecha de gracia
@@ -372,22 +375,21 @@ const NegociacionIndividual = ({ negociacion }) => {
       // Determinar el estado de la cuota
       let estadoCuota = '';
       const hoy = new Date();
+      const cincoDias = 5 * 24 * 60 * 60 * 1000; // Cinco días en milisegundos
 
-      if (hoy < fechaPago) {
-        estadoCuota = 'Por pagar';
-      } else if (hoy <= new Date(fechaPago.getTime() - cuatroDias)) {
-        estadoCuota = 'Por pagar'; // Si aún no es tiempo de mostrar "Próxima a vencer"
-      } else if (hoy <= new Date(fechaPago.getTime() - 3 * 24 * 60 * 60 * 1000)) {
-        estadoCuota = 'Próxima a vencer';
-      } else {
+      if (hoy > fechaPago) {
         estadoCuota = 'Vencida';
+      } else if (hoy >= fechaPago - cincoDias) {
+        estadoCuota = 'Próxima a vencerse';
+      } else {
+        estadoCuota = 'Por pagar';
       }
 
       planDePago.push({
         numCuota: i + 1, // Número de cuota
         fecha: format(fechaPago, 'dd/MM/yyyy'),
         valor: valorCuota.toLocaleString('es-CO', { minimumFractionDigits: 0 }),
-        estadoCuota: estadoCuota, // Estado de la cuota
+        estadoCuota: estadoCuota,
       });
     }
 
@@ -415,10 +417,6 @@ const NegociacionIndividual = ({ negociacion }) => {
         <td style={{ textAlign: 'center' }}>
           <Link onClick={toggleDetalles} >
             <i className="fa fa-circle-info" title="Detalle" style={{ marginRight: 10, color: '#212529', fontSize: 22 }} />
-          </Link>
-
-          <Link to={`/admin/editarnegociacion/${negociacion._id}`}>
-            <i className="fa fa-pencil" title="Editar" style={{ marginRight: 10, color: '#212529', fontSize: 22 }} />
           </Link>
 
           <Link onClick={toggleActivation}>
@@ -483,7 +481,7 @@ const NegociacionIndividual = ({ negociacion }) => {
             <tbody style={{ border: "2px solid blue" }}>
               <tr>
                 <th scope="row" style={{ backgroundColor: "#032770", color: 'white' }}>Fecha Facturación</th>
-                <td style={{ color: '#032770' }}>{fechaCreacionFormateada.toString()}</td>
+                <td style={{ color: '#032770' }}>{fechaCreacionFormateada}</td>
               </tr>
               <tr>
                 <th scope="row" style={{ backgroundColor: "#032770", color: 'white' }}>Cliente</th>
@@ -585,7 +583,7 @@ const NegociacionIndividual = ({ negociacion }) => {
                         <FaCheck
                           className={`green-icon ${cuotasPagadas[item.numCuota] ? 'active' : ''}`} title="Pagada"
                           style={{ fontSize: 20, cursor: 'pointer', color: '#699F29' }}
-                          onClick={() => handleCuotaPagada(item.numCuota)} // Asegúrate de pasar el número de cuota aquí
+                          onClick={() => handleCuotaPagada(item.numCuota)}
                         />
                         {/* Marcar como no pagada */}
                         <FaTimes
@@ -623,6 +621,5 @@ const NegociacionIndividual = ({ negociacion }) => {
     </>
   );
 };
-
 
 export default NegociacionIndividual;

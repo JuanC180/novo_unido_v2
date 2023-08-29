@@ -59,23 +59,6 @@ const CrearProducto = () => {
         }
     }
 
-    function validarTexto(event, setErrorState, longitudMinima) {
-        const inputText = event.target.value;
-
-        // Remover caracteres especiales y números, permitiendo solo letras y la letra "ñ" (tanto en mayúscula como en minúscula)
-        const sanitizedText = inputText.replace(/[^a-zA-ZñÑ\s]/g, '');
-
-        // Actualizar el valor del input con el texto sanitizado
-        event.target.value = sanitizedText;
-
-        // Validar longitud mínima
-        if (sanitizedText.length < longitudMinima) {
-            setErrorState(true);
-        } else {
-            setErrorState(false);
-        }
-    }
-
     const agregarProducto = async (e) => {
         e.preventDefault()
         // Verificar que todos los campos sean llenados
@@ -102,7 +85,7 @@ const CrearProducto = () => {
             descripcionError
         ) {
             swal({
-                title: "Longitudes incorrectas",
+                title: "Datos incorrectos",
                 text: "Verifica los campos marcados en rojo",
                 icon: "error",
                 button: "Aceptar"
@@ -255,10 +238,17 @@ const CrearProducto = () => {
                                         placeholder="Nombre"
                                         required
                                         maxLength={40}
-                                        onInput={(e) => validarTexto(e, setNombreError, 3)}
                                         value={nombre}
                                         onChange={(e) => {
-                                            setNombre(e.target.value);
+                                            const inputText = e.target.value;
+                                            const sanitizedText = inputText.replace(/[^a-zA-Z0-9ñÑ\s]/g, '');
+                                            setNombre(sanitizedText);
+
+                                            if (sanitizedText.length < 3) {
+                                                setNombreError(true);
+                                            } else {
+                                                setNombreError(false);
+                                            }
                                         }}
                                     />
                                     {nombreError && <div className="invalid-feedback">El nombre debe tener al menos 3 caracteres.</div>}

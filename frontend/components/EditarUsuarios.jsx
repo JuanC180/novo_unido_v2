@@ -84,6 +84,19 @@ const EditarUsuarios = () => {
       return
     }
 
+    if (
+      nombreError ||
+      apellidoError ||
+      emailError
+    ) {
+      swal({
+        title: "Datos incorrectos",
+        text: "Verifica los campos marcados en rojo",
+        icon: "error",
+        button: "Aceptar"
+      });
+      return;
+    }
 
     const usuarioActualizado = {
       nombre,
@@ -183,6 +196,7 @@ const EditarUsuarios = () => {
                     aria-describedby="emailHelp"
                     placeholder="Email"
                     required
+                    maxLength={60}
                     value={email}
                     onChange={handleEmailChange}
                   />

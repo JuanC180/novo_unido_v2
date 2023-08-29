@@ -89,12 +89,12 @@ const MenuLateral = ({ componentePrincipal }) => {
                             </div>
                         </Link>
 
-                        {/* <Link className="d-flex justify-content-between  py-2 border-bottom border-primary" to="/admin/listaplandepago">
+                        <Link className="d-flex justify-content-between  py-2 border-bottom border-primary" to="/admin/listaplandepago">
                             <div className="d-flex  align-items-center ">
                                 <i className="icon-menu fa-solid fa-bell mx-4" title="Seguimiento"></i>
                                 <p className="text-icon-menu my-0">Seguimiento</p>
                             </div>
-                        </Link> */}
+                        </Link>
 
                         <Link className="d-flex li-cerrar-sesion justify-content-between  py-2 border-bottom border-primary" href="/" onClick={cerrarSesion}>
                             <div className="d-flex  align-items-center ">

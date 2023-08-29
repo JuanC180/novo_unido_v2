@@ -88,7 +88,9 @@ const UsuarioIndividual = ({ usuario }) => {
                             closeModal: true
                         }
                     }
-                })
+                }).then(() => {
+                    window.location.reload();
+                });
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -117,7 +119,6 @@ const UsuarioIndividual = ({ usuario }) => {
             <td>{usuario.nombre}</td>
             <td>{usuario.apellido}</td>
             <td>{usuario.email}</td>
-            <td>{usuario.estado}</td>
             <td style={{ textAlign: 'center' }}>
                 <Link onClick={toggleActivation}>
                     <FaToggleOn
@@ -132,10 +133,41 @@ const UsuarioIndividual = ({ usuario }) => {
                     />
                 </Link>
 
-                <Link to={`/admin/editar-usuario/${usuario._id}`}>
+                {/* <Link to={`/admin/editar-usuario/${usuario._id}`}>
                     <i className="fa fa-pencil" title="Editar" style={{ marginRight: 10, color: '#212529', fontSize: 22 }} />
+                </Link> */}
+                <Link to={`/admin/editar-usuario/${usuario._id}`}>
+                    <i
+                        className="fa fa-pencil"
+                        title="Editar"
+                        style={{
+                            marginRight: 10,
+                            color: usuario.estado === 'Activo' ? '#212529' : 'gray',
+                            fontSize: 22,
+                            cursor: usuario.estado === 'Activo' ? 'pointer' : 'not-allowed',
+                        }}
+                        onClick={event => {
+                            if (usuario.estado !== 'Activo') {
+                                event.preventDefault();
+                                swal({
+                                    title: "Usuario inactivo",
+                                    text: "No se puede editar un usuario inactivo.",
+                                    icon: "warning",
+                                    buttons: {
+                                        accept: {
+                                            text: "Aceptar",
+                                            value: true,
+                                            visible: true,
+                                            className: "btn-danger",
+                                            closeModal: true
+                                        }
+                                    }
+                                });
+                            }
+                        }}
+                    />
                 </Link>
-                
+
                 {/* <Link onClick={eliminarUsuario}>
                     <i className="fa fa-trash" title="Eliminar" style={{ marginRight: 10, color: '#dc3545', fontSize: 22 }} />
                 </Link> */}
