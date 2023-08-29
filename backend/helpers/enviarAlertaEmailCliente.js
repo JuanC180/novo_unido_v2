@@ -2,29 +2,29 @@ const nodemailer = require('nodemailer')
 
 const enviarAlertaEmailCliente = async (datos) => {
 
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+        },
+    });
 
 
-  const { negociacion, valorFormateado, fechaTexto, datosCliente } = datos;
+    const { negociacion, valorFormateado, fechaTexto, datosCliente } = datos;
 
 
 
-  const info = await transporter.sendMail({
-    from: "novotic.notificaciones@gmail.com",
-    to: datosCliente.email,
-    subject: "Se aproxima fecha de pago - Novotic",
-    // html: `<p>Hola: ${clio.nombre} ${clio.apellido}, comprueba tu correo electrónico</p>
-    //     <p>Se acerca tu fecha de pago, <b> ${fechaTexto} </b>
+    const info = await transporter.sendMail({
+        from: "novotic.notificaciones@gmail.com",
+        to: datosCliente.email,
+        subject: "Se aproxima fecha de pago - Novotic",
+        // html: `<p>Hola: ${clio.nombre} ${clio.apellido}, comprueba tu correo electrónico</p>
+        //     <p>Se acerca tu fecha de pago, <b> ${fechaTexto} </b>
 
-    //     <p>Si no eres quien ha creado la cuenta, ignora este mensaje</p>
-    //   `,
-    html:`
+        //     <p>Si no eres quien ha creado la cuenta, ignora este mensaje</p>
+        //   `,
+        html: `
     <table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" style="background-color: rgb(238, 238, 240); margin:0;padding:0;table-layout:fixed;border-spacing:0;border-collapse:collapse;width:100%!important;min-width:100%;color:#0a0836;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,&quot;Roboto&quot;,&quot;Oxygen&quot;,&quot;Ubuntu&quot;,&quot;Cantarell&quot;,&quot;Fira Sans&quot;,&quot;Droid Sans&quot;,&quot;Helvetica Neue&quot;,sans-serif;font-size:14px;line-height:1.5" bgcolor="#f6fafb">
     <tbody>
         <tr style="padding:0">
@@ -32,7 +32,7 @@ const enviarAlertaEmailCliente = async (datos) => {
             <td align="center" valign="top" style="padding:10px 10px 0;word-break:break-word;border-collapse:collapse!important">
             <!-- Replace the URL below with the actual URL of your image -->
             <a rel="noopener noreferrer" href="" style="color:#00b08c!important" target="_blank">
-            <img alt="Novotic Logo" src="https://upload.wikimedia.org/wikipedia/commons/3/39/Novomatic_Logo_2014.png" width="130" height="38" style="border:none;max-width:100%;outline:none;text-decoration:none;vertical-align:middle;">
+            <img alt="Novotic" src="https://lh3.googleusercontent.com/a/AAcHTtcJmmhbsdJupaFwLLWNm8Nki96MDHK7w14zrQIbbEDJug=s288-c-no" width="130" height="80" style="border:none;max-width:100%;outline:none;text-decoration:none;vertical-align:middle;">
 
             </a>
         </td>
@@ -75,7 +75,7 @@ const enviarAlertaEmailCliente = async (datos) => {
                                 <table border="0" cellpadding="0" cellspacing="0" width="50%" style="padding:0;table-layout:auto;border-spacing:0;border-collapse:collapse;border-top-width:1px;border-top-color:#e4e4e9;border-top-style:solid">
                                     <tbody>
                                         <tr style="padding:0">
-                                            <td align="left" valign="middle" style="padding:20px 0;word-break:break-word;border-collapse:collapse!important;width:64px"><img alt="Contact person" title="Contact person" src="https://www.novomatic.com/themes/novomatic/images/novomatic_n.svg" style="border:none;width:46px!important;max-width:100%;outline:none;text-decoration:none;vertical-align:middle;height:46px!important" class="CToWUd" data-bit="iit"></td>
+                                            <td align="left" valign="middle" style="padding:20px 0;word-break:break-word;border-collapse:collapse!important;width:64px"><img alt="Contact person" title="Contact person" src="https://lh3.googleusercontent.com/a/AAcHTtcJmmhbsdJupaFwLLWNm8Nki96MDHK7w14zrQIbbEDJug=s288-c-no" style="border:none;width:46px!important;max-width:100%;outline:none;text-decoration:none;vertical-align:middle;height:46px!important" class="CToWUd" data-bit="iit"></td>
                                             <td align="left" valign="middle" style="padding:0;word-break:break-word;border-collapse:collapse!important;border-top-width:1px;border-top-color:#e4e4e9;border-top-style:solid;font-size:12px;line-height:1.5"> Disfruta usando nuestro producto!<br><strong>Novotic</strong>   </td>
                                         </tr>
                                     </tbody>
@@ -121,9 +121,9 @@ const enviarAlertaEmailCliente = async (datos) => {
     </tbody>
   </table>
     `
-  });
+    });
 
-      console.log("Mensaje enviado: %s", info.messageId)
+    console.log("Mensaje enviado: %s", info.messageId)
 }
 
 module.exports = enviarAlertaEmailCliente

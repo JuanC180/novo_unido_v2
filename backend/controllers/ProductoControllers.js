@@ -2,45 +2,47 @@ const Producto = require('../models/ProductoModels');
 const path = require('path')
 // const generarId = require('../helpers/generarId')
 
-const  { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require('uuid');
 
 
 const registrarProducto = async (req, res) => {
 
     if (!req.files || Object.keys(req.files).length === 0 || !req.files.imagen) {
-        res.status(400).json({msg: 'No hay archivos que subir'});
+        res.status(400).json({ msg: 'No hay archivos que subir' });
         return;
-      }
-    
-      const {imagen} = req.files;
-      const nombreCortado = imagen.name.split('.')
-      const extension = nombreCortado[ nombreCortado.length - 1 ]
+    }
 
-      const extensionesValidas = ['png','jpg','jpeg'];
-      if(!extensionesValidas.includes(extension)){
+    const { imagen } = req.files;
+    const nombreCortado = imagen.name.split('.')
+    const extension = nombreCortado[nombreCortado.length - 1]
+
+    const extensionesValidas = ['png', 'jpg', 'jpeg'];
+    if (!extensionesValidas.includes(extension)) {
         return res.status(400).json({ msg: `La extensión ${extension} no es permitida, extensiones válidas ${extensionesValidas}` })
-      }
+    }
 
-      const nombreFinal = uuidv4() + '.' + extension
-      const uploadPath = path.join( __dirname, '../../frontend/public/uploads/products/', nombreFinal);
+    const nombreFinal = uuidv4() + '.' + extension
+    //const uploadPath = path.join(__dirname, '../../frontend/public/uploads/products/', nombreFinal);
 
-  
-    
-      imagen.mv(uploadPath, (err) => {
+    const uploadPath = path.join(__dirname, '../../backend/public/uploads/products/', nombreFinal);
+
+    //console.log(uploadPath)
+
+    imagen.mv(uploadPath, (err) => {
         if (err) {
             console.log(err)
-        //   return res.status(500).json({err});
+            //   return res.status(500).json({err});
         }
-    
+
         // res.json({msg: 'File uploaded to ' + uploadPath});
-      });
+    });
 
     const { referencia } = req.body;
-    const existeReferencia = await Producto.findOne({referencia})
+    const existeReferencia = await Producto.findOne({ referencia })
 
-    if(existeReferencia){
+    if (existeReferencia) {
         const error = new Error("Referencia ya registrada.")
-        return res.status(400).json({msg: error.message})
+        return res.status(400).json({ msg: error.message })
     }
 
     try {
@@ -128,11 +130,24 @@ const actualizarEstadoProducto = (req, res) => {
         });
 };
 
+const obtenerImagen = (req, res) => {
+    const id = req.params.id;
+    Producto.findById(id)
+        .then((result) => {
+            res.json(result.path);
+        })
+        .catch((error) => {
+            console.error(error);
+            res.status(500).json({ error: 'Error al obtener los datos del producto' });
+        });
+}
+
 module.exports = {
     registrarProducto,
     obtenerProductos,
     obtenerDataProductos,
     actualizarProducto,
     eliminarProducto,
-    actualizarEstadoProducto
+    actualizarEstadoProducto,
+    obtenerImagen
 }
