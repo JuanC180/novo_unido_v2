@@ -111,7 +111,7 @@ const CrearNegociacion = () => {
             total === ''
         ) {
             swal({
-                title: "1 Campo vacíos",
+                title: "Campos vacíos",
                 text: "Todos los campos son obligatorios",
                 icon: "warning",
                 button: "Aceptar"
@@ -119,35 +119,34 @@ const CrearNegociacion = () => {
             return
         }
 
-        // if (
-        //     numFacturaError ||
-        //     anticipoError ||
-        //     tasaError ||
-        //     interesesError ||
-        //     totalError ||
-        //     cantidadError ||
-        //     precioVentaError
-        // ) {
-        //     swal({
-        //         title: "Longitudes incorrectas",
-        //         text: "Verifica los campos marcados en rojo",
-        //         icon: "error",
-        //         button: "Aceptar"
-        //     });
-        //     return;
-        // }
+        if (
+            numFacturaError ||
+            anticipoError ||
+            tasaError ||
+            interesesError ||
+            totalError ||
+            cantidadError.some(error => error) || // Verificar si al menos un elemento en cantidadError es true
+            precioVentaError.some(error => error)
+        )
 
-        // for (let i = 0; i < selectedProductos.length; i++) {
-        //     if (!cantidad[i] || !precioVenta[i] || !productosSeleccionados[i]) {
-        //         swal({
-        //             title: "Campos vacíos",
-        //             text: "Todos los campos son obligatorios",
-        //             icon: "warning",
-        //             button: "Aceptar"
-        //         });
-        //         return;
-        //     }
-        // }
+            swal({
+                title: "Datos incorrectos",
+                text: "Verifica los campos marcados en rojo",
+                icon: "error",
+                button: "Aceptar"
+            });
+
+        for (let i = 0; i < selectedProductos.length; i++) {
+            if (!cantidad[i] || !precioVenta[i] || !productosSeleccionados[i]) {
+                swal({
+                    title: "Campos vacíos",
+                    text: "Todos los campos son obligatorios",
+                    icon: "warning",
+                    button: "Aceptar"
+                });
+                return;
+            }
+        }
 
         const tipoMaquinaArray = productosSeleccionados.map((producto) => producto.tipoMaquina);
         const cantidadArray = productosSeleccionados.map((producto) => Number(producto.cantidad));
@@ -209,14 +208,20 @@ const CrearNegociacion = () => {
             }
         } catch (error) {
             console.error(error);
+
+            let errorMessage = "Ocurrió un error"; // Mensaje por defecto
+            if (error.message) {
+                errorMessage = error.message; // Usar el mensaje de error específico si está disponible
+            }
+
             swal({
-                title: `${error.message}`,
-                text: "",
-                icon: "warning",
+                title: "Error",
+                text: errorMessage,
+                icon: "error",
                 button: "Aceptar"
-            })
+            });
         }
-    };
+    }
 
     const agregarProducto = () => {
         if (selectedProductos.length === 0) {
@@ -281,6 +286,7 @@ const CrearNegociacion = () => {
                                 <div className="mb-3 w-100">
                                     <label className="form-label fw-bold">Cliente</label>
                                     <select id="cliente" className="form-select" value={selectedCliente} onChange={(e) => setSelectedCliente(e.target.value)}>
+                                        
                                         <option value="">Seleccionar cliente</option>
                                         {dataclientes.map(cliente => (
                                             <option key={cliente.id} value={cliente.nombre}>
@@ -354,23 +360,46 @@ const CrearNegociacion = () => {
                                     </select>
                                 </div>
                                 <div className="mb-3 w-100">
-                                     <label className="form-label fw-bold">Precio venta</label>
+                                    <label className="form-label fw-bold">Precio venta</label>
                                     {selectedProductos.length > 0 ? (
                                         selectedProductos.map((producto, index) => (
-                                            <input
-                                                key={index}
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="$"
-                                                required
-                                                onKeyDown={validarNumericos}
-                                                value={precioVenta[index] || ''}
-                                                onChange={(e) => {
-                                                    const nuevosValores = [...precioVenta];
-                                                    nuevosValores[index] = e.target.value;
-                                                    setPrecioVenta(nuevosValores);
-                                                }}
-                                            />
+                                            <div key={index} className="mb-3">
+                                                <input
+                                                    type="text"
+                                                    className={`form-control ${precioVentaError[index] ? 'is-invalid' : ''}`}
+                                                    placeholder="$"
+                                                    required
+                                                    maxLength={10}  // Ajustar la longitud máxima según tus necesidades
+                                                    onInput={(e) => {
+                                                        e.target.value = e.target.value.replace(/[^0-9.]/g, ''); // Eliminar caracteres no numéricos y puntos
+                                                        const nuevosValores = [...precioVenta];
+                                                        nuevosValores[index] = e.target.value;
+                                                        setPrecioVenta(nuevosValores);
+
+                                                        const parsedValue = parseFloat(e.target.value.replace(/\./g, ''));
+                                                        if (parsedValue < 33000000) {
+                                                            setPrecioVentaError(prevErrors => {
+                                                                const newErrors = [...prevErrors];
+                                                                newErrors[index] = true;
+                                                                return newErrors;
+                                                            });
+                                                        } else {
+                                                            setPrecioVentaError(prevErrors => {
+                                                                const newErrors = [...prevErrors];
+                                                                newErrors[index] = false;
+                                                                return newErrors;
+                                                            });
+                                                        }
+                                                    }}
+                                                    value={precioVenta[index] || ''}
+                                                    onChange={(e) => {
+                                                        const nuevosValores = [...precioVenta];
+                                                        nuevosValores[index] = e.target.value;
+                                                        setPrecioVenta(nuevosValores);
+                                                    }}
+                                                />
+                                                {precioVentaError[index] && <div className="invalid-feedback">El precio de venta debe ser al menos $33.000.000.</div>}
+                                            </div>
                                         ))
                                     ) : (
                                         <input
@@ -424,7 +453,7 @@ const CrearNegociacion = () => {
                                             onKeyDown={(e) => {
                                                 // Obtener el carácter presionado
                                                 const charTyped = e.key;
-    
+
                                                 // Permitir solo números y un punto decimal
                                                 if (
                                                     (charTyped < '0' || charTyped > '9') && // Números
@@ -455,7 +484,7 @@ const CrearNegociacion = () => {
                                             onKeyDown={(e) => {
                                                 // Obtener el carácter presionado
                                                 const charTyped = e.key;
-    
+
                                                 // Permitir solo números y un punto decimal
                                                 if (
                                                     (charTyped < '0' || charTyped > '9') && // Números
@@ -467,8 +496,8 @@ const CrearNegociacion = () => {
                                                 }
                                             }}
                                         />
-                                        {interesesError && <div className="invalid-feedback">El interés debe estar entre 0.01 y 1.</div>}                                    
-                                        </div>
+                                        {interesesError && <div className="invalid-feedback">El interés debe estar entre 0.01 y 1.</div>}
+                                    </div>
                                     <div className="mb-3 w-100">
                                         <label className="form-label fw-bold">Total</label>
                                         <input
@@ -477,7 +506,7 @@ const CrearNegociacion = () => {
                                             placeholder="$"
                                             required
                                             maxLength={9}
-                                            onInput={(e) => validarNumericos(e, setTotalError, 8)}
+                                            onInput={(e) => validarNumericos(e, setErrorState, 8)}
                                             value={total}
                                             onChange={(e) => {
                                                 setTotal(e.target.value);
@@ -497,36 +526,46 @@ const CrearNegociacion = () => {
                                         {/* <label className="form-label fw-bold"></label>
                                         <input type="text" className="form-control" }} /> */}
                                     </div>
-                                    
+
                                     <div className="mb-3 w-100">
                                         <label className="form-label fw-bold">Cantidad</label>
                                         {selectedProductos.length > 0 ? (
                                             selectedProductos.map((producto, index) => (
-                                                <div key={index}>
+                                                <div key={index} className="mb-3">
                                                     <input
                                                         type="text"
                                                         className={`form-control ${cantidadError[index] ? 'is-invalid' : ''}`}
                                                         placeholder="Cantidad"
                                                         required
                                                         maxLength={2}
-                                                        onKeyDown={(e) => validarNumericos(e, (isValid) => {
-                                                            const nuevosErrores = [...cantidadError];
-                                                            nuevosErrores[index] = !isValid || e.target.value.length === 0;
-                                                            setCantidadError(nuevosErrores);
-                                                        }, 1)}
+                                                        onInput={(e) => {
+                                                            e.target.value = e.target.value.replace(/[^0-9]/g, ''); // Eliminar caracteres no numéricos
+                                                            const nuevosValores = [...cantidad];
+                                                            nuevosValores[index] = e.target.value;
+                                                            setCantidad(nuevosValores);
+
+                                                            if (e.target.value < 1) {
+                                                                setCantidadError(prevErrors => {
+                                                                    const newErrors = [...prevErrors];
+                                                                    newErrors[index] = true;
+                                                                    return newErrors;
+                                                                });
+                                                            } else {
+                                                                setCantidadError(prevErrors => {
+                                                                    const newErrors = [...prevErrors];
+                                                                    newErrors[index] = false;
+                                                                    return newErrors;
+                                                                });
+                                                            }
+                                                        }}
                                                         value={cantidad[index] || ''}
                                                         onChange={(e) => {
                                                             const nuevosValores = [...cantidad];
                                                             nuevosValores[index] = e.target.value;
                                                             setCantidad(nuevosValores);
-
-                                                            // Aquí aplicamos la validación para actualizar el estado de error
-                                                            const nuevosErrores = [...cantidadError];
-                                                            nuevosErrores[index] = e.target.value.length === 0 || parseFloat(e.target.value) <= 0;
-                                                            setCantidadError(nuevosErrores);
                                                         }}
                                                     />
-                                                    {cantidadError[index] && <div className="invalid-feedback">La cantidad debe ser mayor a 0.</div>}
+                                                    {cantidadError[index] && <div className="invalid-feedback">La cantidad debe ser al menos 1.</div>}
                                                 </div>
                                             ))
                                         ) : (

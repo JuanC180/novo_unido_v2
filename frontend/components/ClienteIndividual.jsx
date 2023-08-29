@@ -82,7 +82,6 @@ const ClienteIndividual = ({ cliente }) => {
     });
   };
 
-
   useEffect(() => {
     fetch('http://localhost:4000/api/negociacion/obtenerNegociaciones')
       .then(res => res.json())
@@ -94,8 +93,12 @@ const ClienteIndividual = ({ cliente }) => {
       });
   }, []);
 
+
+  // const tieneNegociacionesActivas = () => {
+  //   return datanegociaciones.some(negociacion => negociacion.cliente === cliente.nombre && negociacion.estado === 'Activo');
+  // };
   const tieneNegociacionesActivas = () => {
-    return datanegociaciones.some(negociacion => negociacion.cliente === cliente.nombre && negociacion.estado === 'Activo');
+    return datanegociaciones.some(negociacion => negociacion.clienteId === cliente._id && negociacion.estado === 'Activo');
   };
 
   const toggleDetalles = () => {
@@ -175,9 +178,10 @@ const ClienteIndividual = ({ cliente }) => {
               closeModal: true
             }
           }
-        })
-      })
-      .catch(error => {
+        }).then(() => {
+          window.location.reload();
+        });
+      }).catch(error => {
         console.error('Error:', error);
         swal({
           title: "Error",
@@ -208,8 +212,39 @@ const ClienteIndividual = ({ cliente }) => {
           <i className="fa fa-circle-info" title="Detalle" style={{ marginRight: 10, color: '#212529', fontSize: 22 }} />
         </Link>
 
-        <Link to={`/admin/editarcliente/${cliente._id}`}>
+        {/* <Link to={`/admin/editarcliente/${cliente._id}`}>
           <i className="fa fa-pencil" title="Editar" style={{ marginRight: 10, color: '#212529', fontSize: 22 }} />
+        </Link> */}
+        <Link to={`/admin/editarcliente/${cliente._id}`}>
+          <i
+            className="fa fa-pencil"
+            title="Editar"
+            style={{
+              marginRight: 10,
+              color: cliente.estado === 'Activo' ? '#212529' : 'gray',
+              fontSize: 22,
+              cursor: cliente.estado === 'Activo' ? 'pointer' : 'not-allowed',
+            }}
+            onClick={event => {
+              if (cliente.estado !== 'Activo') {
+                event.preventDefault();
+                swal({
+                  title: "Cliente inactivo",
+                  text: "No se puede editar un cliente inactivo.",
+                  icon: "warning",
+                  buttons: {
+                    accept: {
+                      text: "Aceptar",
+                      value: true,
+                      visible: true,
+                      className: "btn-danger",
+                      closeModal: true
+                    }
+                  }
+                });
+              }
+            }}
+          />
         </Link>
         <Link onClick={toggleActivation}>
           <FaToggleOn

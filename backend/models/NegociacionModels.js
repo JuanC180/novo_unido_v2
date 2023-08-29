@@ -86,8 +86,9 @@ const schemaNegociacion = new Schema({
     detalleCuotas: {
         type: [
             {
-                fecha: Date,   // Fecha de la cuota
-                valor: Number, // Valor de la cuota
+                fecha: Date,
+                valor: Number,
+                estadoCuota: String,
             }
         ],
         default: [],  // Inicialmente vacío
@@ -136,6 +137,21 @@ schemaNegociacion.pre("save", function (next) {
     } else {
         this.estadoNegociacion = "En paz";
     }
+
+    const currentDate = new Date();
+
+    for (const cuota of this.detalleCuotas) {
+        const fiveDaysBeforeDueDate = new Date(cuota.fecha - 5 * 24 * 60 * 60 * 1000);
+    
+        if (cuota.fecha < currentDate) {
+            cuota.estadoCuota = "Vencida";
+        } else if (currentDate <= cuota.fecha && currentDate > fiveDaysBeforeDueDate) {
+            cuota.estadoCuota = "Próxima a vencerse";
+        } else {
+            cuota.estadoCuota = "Por pagar";
+        }
+    }
+
     next();
 });
 

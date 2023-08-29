@@ -164,7 +164,7 @@ const EditarNegociacion = () => {
             precioVentaError
         ) {
             swal({
-                title: "Longitudes incorrectas",
+                title: "Datos incorrectos",
                 text: "Verifica los campos marcados en rojo",
                 icon: "error",
                 button: "Aceptar"

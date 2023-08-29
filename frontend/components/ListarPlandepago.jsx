@@ -25,7 +25,7 @@ const ListarPlandepago = () => {
                 console.error(err);
             });
     }, []);
-
+    
     function searchData(event) {
         event.preventDefault();
         setBusqueda(event.target.value);
@@ -72,7 +72,7 @@ const ListarPlandepago = () => {
                                 <div className="col-sm-12 col-md-6 blo2 my-1">
                                     <form action="" className="div-search">
                                         <input type="text" className="search-style form-control rounded-pill" value={busqueda} onChange={searchData}
-                                            placeholder="Search" />
+                                            placeholder="Buscar" />
                                     </form>
                                 </div>
                             </div>
@@ -84,13 +84,14 @@ const ListarPlandepago = () => {
                                 <tr>
                                     <th scope="col">Cliente</th>
                                     <th scope="col">Factura</th>
-                                    <th scope="col">Fecha Pago</th>
-                                    <th scope="col">Valor Pago</th>
+                                    <th scope="col">Fecha Límite de Pago</th>
+                                    <th scope="col">Valor a Pagar</th>
 
                                     <th scope="col" style={{ textAlign: 'center' }}>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                
                                 {listaPlandePagos}
                             </tbody>
                         </table>

@@ -8,7 +8,6 @@ const ListarUsuarios = () => {
     const [usuarios, setUsuarios] = useState([])
     const [busqueda, setBusqueda] = useState("");
     const [paginaActual, setPaginaActual] = useState(1);
-    
     const usuariosPorPagina = 5;
     const [usuariosFiltrados, setUsuariosFiltrados] = useState([])
     
@@ -117,7 +116,6 @@ const ListarUsuarios = () => {
                                     <th scope="col">Nombre</th>
                                     <th scope="col">Apellido</th>
                                     <th scope="col">Email</th>
-                                    <th scope="col">Estado</th>
                                     <th scope="col" style={{ textAlign: 'center' }}>Acciones</th>
                                 </tr>
                             </thead>
