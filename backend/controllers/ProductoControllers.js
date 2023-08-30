@@ -1,6 +1,9 @@
 const Producto = require('../models/ProductoModels');
 const path = require('path')
+const fs = require('fs')
 // const generarId = require('../helpers/generarId')
+
+//const image = require('../public/uploads')
 
 const { v4: uuidv4 } = require('uuid');
 
@@ -134,7 +137,16 @@ const obtenerImagen = (req, res) => {
     const id = req.params.id;
     Producto.findById(id)
         .then((result) => {
-            res.json(result.path);
+            const pathImagen = path.join(__dirname, '../public/uploads/products', result.imagen)
+            if (fs.existsSync(pathImagen)) {
+                return res.sendFile(pathImagen)
+                //res.json({ msg: 'No sale ', pathImagen });
+            }
+            /*  else {
+                  res.json({ msg: 'ruta ', pathImagen });
+              }*/
+            //res.json(result.path);
+            //res.sendFile(pathImagen)
         })
         .catch((error) => {
             console.error(error);
