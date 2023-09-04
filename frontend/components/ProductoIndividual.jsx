@@ -213,7 +213,7 @@ const ProductoIndividual = ({ producto }) => {
                 <div style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>{producto.descripcion}</div>
               </td>
             </tr>
-            <p><img className='text-centerounded mx-auto d-block' width={200} height={200} src={`../uploads/products/${producto.imagen}`} ></img></p>
+            <p><img className='text-centerounded mx-auto d-block' width={200} height={200} src={`${import.meta.env.VITE_BACKEND_URL}/api/producto/obtener-imagen-producto/${producto._id}`} ></img></p>
           </tbody>
         </table>
       </Modal>

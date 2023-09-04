@@ -18,6 +18,11 @@ const EditarProducto = () => {
     const [descripcionError, setDescripcionError] = useState(false)
     const { auth } = useAuth()
 
+    const handleFileChange = (e) => {
+        const selectedFile = e.target.files[0];
+        setImagen(selectedFile)
+    }
+
     const handleCancelar = () => {
         navigate(-1); // Regresa a la ubicación anterior
     };
@@ -92,7 +97,9 @@ const EditarProducto = () => {
     }, [id]);
 
     //Función para actualizar
-    const actualizarProducto = async () => {
+    const actualizarProducto = async (e) => {
+        e.preventDefault()
+
 
         // Verificar que todos los campos sean llenados
         if (
@@ -134,15 +141,23 @@ const EditarProducto = () => {
             descripcion
         };
 
+        const formData = new FormData()
+        formData.append('referencia', referencia)
+        formData.append('nombre', nombre)
+        formData.append('precioBase', precioBase)
+        formData.append('imagen', imagen)
+        formData.append('descripcion', descripcion)
+        formData.append('productoActualizado', JSON.stringify(productoActualizado))
+
         try {
             const url = `producto/actualizarProducto/${id}`;
             // const response = await fetch(`http://localhost:4000/api/producto/actualizarProducto/${id}`, {
             const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/${url}`, {
                 method: 'PUT',
-                headers: {
+                /*headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(productoActualizado)
+                },*/
+                body: formData
             });
 
             if (response.ok) {
@@ -194,7 +209,8 @@ const EditarProducto = () => {
                 <main className="d-flex flex-column  border border-primary m-3 rounded">
                     <h3 className="text-center py-0 pt-3 my-0">EDITAR PRODUCTO</h3>
                     <br />
-                    <form className="formulario" action="">
+                    {/* <form className="formulario" encType='multipart/form-data' onSubmit={actualizarProducto}> */}
+                    <form className="formulario" encType='multipart/form-data' onSubmit={actualizarProducto}>
                         <div className="contenedores d-flex justify-content-center flex-lg-row flex-column flex-sm-column mx-5 gap-5">
                             <div className="contenedores__div1 d-flex flex-column align-items-center ms-sm-0 w-100">
                                 <div className="mb-3 w-100">
@@ -284,14 +300,14 @@ const EditarProducto = () => {
 
                                 <div className="mb-3 w-100">
                                     <label className="form-label fw-bold">Imagen</label>
-                                    <input type="file" className="form-control" placeholder="Imagen" required onChange={(e) => { setImagen(e.target.files[0]) }} />
+                                    <input type="file" className="form-control" placeholder="Imagen" name='imagen' required onChange={handleFileChange} />
                                 </div>
                             </div>
                         </div>
                         <div className="contenedor__botones d-flex justify-content-center flex-lg-row flex-column flex-sm-column my-3 mx-5 gap-5">
                             <div className="d-flex justify-content-center w-100">
                                 <div className="div_botones ms-sm-0 w-100 d-flex justify-content-center">
-                                    <button type="button" className="btn btn-dark btn-styles" onClick={actualizarProducto}>Guardar</button>
+                                    <button type="submit" className="btn btn-dark btn-styles" >Guardar</button>
                                 </div>
                             </div>
                             <div className="d-flex justify-content-center w-100">

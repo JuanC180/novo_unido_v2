@@ -83,7 +83,7 @@ const Login = () => {
                             <input
                                 className='formulario-Input-Text'
                                 type="text" id="correo"
-                                placeholder="Email"
+                                placeholder="Correo"
                                 required
                                 autoComplete="username"
                                 value={email}
@@ -100,7 +100,7 @@ const Login = () => {
                                 className='formulario-Input-password'
                                 type="password"
                                 id="password"
-                                placeholder="Password"
+                                placeholder="Contraseña"
                                 required
                                 autoComplete="current-password"
                                 value={password}
@@ -118,7 +118,7 @@ const Login = () => {
                             <input type='submit' value="Iniciar Sesión" />
                         </div>
                         {/* <i className="icon-menu fa-solid fa-user-tie mx-4 " title="Clientes"></i> */}
-                        <Link className='olvide-pass-text' to="olvide-password">¿Has olvidado tu  Password?</Link>
+                        <Link className='olvide-pass-text' to="olvide-password">¿Has olvidado tu  contraseña?</Link>
 
                     </form>
 
