@@ -58,23 +58,6 @@ const EditarProducto = () => {
         }
     }
 
-    function validarTexto(event, setErrorState, longitudMinima) {
-        const inputText = event.target.value;
-
-        // Remover caracteres especiales y números, permitiendo solo letras y la letra "ñ" (tanto en mayúscula como en minúscula)
-        const sanitizedText = inputText.replace(/[^a-zA-ZñÑ\s]/g, '');
-
-        // Actualizar el valor del input con el texto sanitizado
-        event.target.value = sanitizedText;
-
-        // Validar longitud mínima
-        if (sanitizedText.length < longitudMinima) {
-            setErrorState(true);
-        } else {
-            setErrorState(false);
-        }
-    }
-
     useEffect(() => {
         const url = `producto/obtenerdataproducto/${id}`;
         fetch(`${import.meta.env.VITE_BACKEND_URL}/api/${url}`)
@@ -221,20 +204,22 @@ const EditarProducto = () => {
                                         placeholder="Referencia"
                                         required
                                         value={referencia}
-                                        maxLength={80}
+                                        maxLength={6}
                                         onChange={(e) => {
                                             const inputText = e.target.value;
                                             const sanitizedText = inputText.replace(/[^a-zA-Z0-9ñÑ\s]/g, '');
                                             setReferencia(sanitizedText);
 
-                                            if (sanitizedText.length < 3) {
-                                                setReferenciaError(true);
-                                            } else {
+                                            // Usar una expresión regular para validar la referencia
+                                            const referenciaRegex = /^[a-zA-Z]{2}\d{4}$/;
+                                            if (referenciaRegex.test(sanitizedText)) {
                                                 setReferenciaError(false);
+                                            } else {
+                                                setReferenciaError(true);
                                             }
                                         }}
                                     />
-                                    {referenciaError && <div className="invalid-feedback">La referencia debe tener al menos 3 caracteres.</div>}
+                                    {referenciaError && <div className="invalid-feedback">La referencia debe tener dos letras seguidas de cuatro números.</div>}
                                 </div>
 
                                 <div className="mb-3 w-100">

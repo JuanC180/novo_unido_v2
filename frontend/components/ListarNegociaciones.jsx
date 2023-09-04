@@ -40,8 +40,8 @@ const ListarNegociaciones = () => {
     
         const filteredNegociaciones = datanegociaciones.filter((negociacion) => {
             return (
-                negociacion.numFactura && negociacion.numFactura.toLowerCase().includes(searchValue.toLowerCase()) ||
-                negociacion.cliente && negociacion.cliente.toString().includes(searchValue)
+                (negociacion.numFactura && negociacion.numFactura.toLowerCase().includes(searchValue.toLowerCase())) ||
+                (negociacion.cliente && negociacion.cliente.toString().toLowerCase().includes(searchValue.toLowerCase()))
             );
         });
     
@@ -117,7 +117,6 @@ const ListarNegociaciones = () => {
                                     <tr>
                                         <th scope="col">Cliente</th>
                                         <th scope="col">Factura</th>
-                                        {/* <th scope="col" style={{ textAlign: 'center' }}>Productos</th> */}
                                         <th scope="col">Cuotas</th>
                                         <th scope="col">Fecha Fin Gracia</th>
                                         <th scope="col">Total</th>

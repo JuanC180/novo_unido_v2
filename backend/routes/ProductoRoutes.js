@@ -1,6 +1,10 @@
+const fileUpload = require('express-fileupload');
 const express = require('express');
 const { registrarProducto, obtenerProductos, obtenerDataProductos, actualizarProducto, eliminarProducto, actualizarEstadoProducto, obtenerImagen } = require('../controllers/ProductoControllers');
 const router = express.Router();
+
+// Configurar express-fileupload middleware
+router.use(fileUpload());
 
 //Agregar producto
 router.post('/agregarProducto', registrarProducto)

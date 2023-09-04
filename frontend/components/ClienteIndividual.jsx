@@ -45,9 +45,7 @@ const ClienteIndividual = ({ cliente }) => {
       dangerMode: true
     }).then(isConfirmed => {
       if (isConfirmed) {
-        const url = `cliente/eliminarcliente/${_id}`
-        // fetch(`http://localhost:4000/api/cliente/eliminarcliente/${_id}`, {
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/${url}`, {
+        fetch(`http://localhost:4000/api/cliente/eliminarcliente/${_id}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json'
@@ -158,9 +156,7 @@ const ClienteIndividual = ({ cliente }) => {
 
 
     // Envía la solicitud al servidor para actualizar el estado en la base de datos
-    const url = `cliente/actualizar-estado/${_id}`
-    // fetch(`http://localhost:4000/api/cliente/actualizar-estado/${_id}`, {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/${url}`, {
+    fetch(`http://localhost:4000/api/cliente/actualizar-estado/${_id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -300,7 +296,7 @@ const ClienteIndividual = ({ cliente }) => {
               <td style={{ color: '#032770' }}>{cliente.telefono}</td>
             </tr>
             <tr>
-              <th scope="row" style={{ backgroundColor: "#032770", color: 'white' }}>Correo</th>
+              <th scope="row" style={{ backgroundColor: "#032770", color: 'white' }}>Email</th>
               <td style={{ color: '#032770' }}>{cliente.email}</td>
             </tr>
             <tr>

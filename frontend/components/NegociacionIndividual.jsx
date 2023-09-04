@@ -8,13 +8,11 @@ import Modal from 'react-modal';
 
 import useNegociacion from '../hooks/useNegociacion'
 
-
-
 const NegociacionIndividual = ({ negociacion }) => {
   const { _id } = negociacion;
   const { id } = useParams();
   // const { auth } = useAuth()
-  const {negociaciones} = useNegociacion()
+  const { negociaciones } = useNegociacion()
 
   const [isActivated, setIsActivated] = useState(false);
   const [estado, setEstado] = useState(negociacion.estado);
@@ -23,15 +21,13 @@ const NegociacionIndividual = ({ negociacion }) => {
   const [showPlanPagoModal, setShowPlanPagoModal] = useState(false);
   const [cuotasPagadas, setCuotasPagadas] = useState({});
 
-  // console.log(negociaciones)
-
   //Función para traer los datos del cliente y poder enviar la notificación
   useEffect(() => {
     const url = `cliente/obtenerCliente`;
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/${url}`)
       .then(res => res.json())
       .then(data => {
-        // console.log(data)
+        console.log(data)
         setDataClientes(data);
       })
       .catch(err => {
@@ -153,37 +149,37 @@ const NegociacionIndividual = ({ negociacion }) => {
   const sumaSubtotales = subtotales.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
   let lastExecutionTime = 0;
-  const notificarPorEmail = ( iteracion) => {
+  const notificarPorEmail = (iteracion) => {
 
 
     const now = Date.now();
-    
+
     if (now - lastExecutionTime > 50000) { // only execute once every 5 seconds
       lastExecutionTime = now;
 
       const objetoInfo = { negociacion, iteracion }
       const encodedInfo = encodeURIComponent(JSON.stringify(objetoInfo));
-      
-          // mando datos al server
-    const url = `negociacion/enviar-alerta-email`
-    // fetch(`${import.meta.env.VITE_BACKEND_URL}/api/${url}?info=${encodedInfo}`
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/${url}`
-    , 
-    { 
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ negociacion, iteracion })
-     }
-     )
-      .then(res => res.json() )
-      .then(data =>{
-        console.log(data, "Soy data");
-      })
-      .catch(error => {
-        console.log(error)
-      })
+
+      // mando datos al server
+      const url = `negociacion/enviar-alerta-email`
+      // fetch(`${import.meta.env.VITE_BACKEND_URL}/api/${url}?info=${encodedInfo}`
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/${url}`
+        ,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ negociacion, iteracion })
+        }
+      )
+        .then(res => res.json())
+        .then(data => {
+          console.log(data, "Soy data");
+        })
+        .catch(error => {
+          console.log(error)
+        })
 
     }
 
@@ -194,17 +190,17 @@ const NegociacionIndividual = ({ negociacion }) => {
   // const notificarPorEmail = (iteracion) => {
   //   const today = new Date();
   //   const todayDateString = today.toDateString();
-  
+
   //   if (lastNotificationDate !== todayDateString) {
   //     lastNotificationDate = todayDateString;
   //     enviarNotificacionPorEmail(iteracion);
   //   }
   // };
-  
+
   const enviarNotificacionPorEmail = (iteracion) => {
     const objetoInfo = { negociacion, iteracion };
     const encodedInfo = encodeURIComponent(JSON.stringify(objetoInfo));
-  
+
     const url = `negociacion/enviar-alerta-email`;
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/${url}`, {
       method: 'POST',
@@ -398,7 +394,7 @@ const NegociacionIndividual = ({ negociacion }) => {
 
   const negociacionPlanPagoData = calcularPlanPago();
 
-// console.log(negociacionPlanPagoData)
+  // console.log(negociacionPlanPagoData)
   return (
 
     <>
@@ -410,8 +406,8 @@ const NegociacionIndividual = ({ negociacion }) => {
         <td>$ {parseFloat(negociacion.total).toLocaleString('es-CO')}</td>
         <td>{negociacion.estadoNegociacion}</td>
         <td style={{ textAlign: 'center' }}>
-          <Link onClick={setShowModal}>
-            <i className="fa fa-shopping-cart" style={{ fontSize: '1.5rem', color: '#212529' }} />
+          <Link onClick={setShowModal} >
+            <i className="fa fa-shopping-cart" title='Ver productos' style={{ fontSize: '1.5rem', color: '#212529' }} />
           </Link>
         </td>
         <td style={{ textAlign: 'center' }}>
@@ -593,24 +589,33 @@ const NegociacionIndividual = ({ negociacion }) => {
                         />
                       </span>
                     </td>
+                    {/* <Link onClick={toggleDetalles} > */}
                     <td style={{ textAlign: 'center' }}>
-                      {/* <Link onClick={toggleDetalles} > */}
-                      <Link onClick={(e)=> 
-                        { 
-                          const tagI = document.querySelectorAll('.fa-bell')
+                      <Link
+                        onClick={(e) => {
+                          const tagI = document.querySelectorAll('.fa-bell');
                           tagI.forEach((identi, i) => {
                             identi.setAttribute('id', `${i}`);
-                          })
-                          console.log(e.target.id)
-                          notificarPorEmail(e.target.id)
-                        }
-                      } 
+                          });
+                          console.log(e.target.id);
+                          notificarPorEmail(e.target.id);
+                        }}
+                        // Agregar el atributo 'disabled' cuando estadoCuota no sea "Vencida"
+                        disabled={item.estadoCuota !== 'Vencida'}
                       >
-                        <i className="fa fa-bell" 
-                        
-                        title="Notificar" style={{ marginRight: 10, color: '#212529', fontSize: 22 }} />
+                        <i
+                          className="fa fa-bell"
+                          title="Notificar"
+                          style={{
+                            marginRight: 10,
+                            color: item.estadoCuota === 'Vencida' ? '#212529' : 'gray', // Cambiar el color cuando deshabilitado
+                            fontSize: 22,
+                            cursor: item.estadoCuota === 'Vencida' ? 'pointer' : 'not-allowed', // Cambiar el cursor cuando deshabilitado
+                          }}
+                        />
                       </Link>
                     </td>
+
                   </tr>
                 ))}
               </tbody>

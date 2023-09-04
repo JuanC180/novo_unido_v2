@@ -5,7 +5,6 @@ const obtenerCliente = require('../helpers/obteneCliente')
 const enviarNoficacion = require('../helpers/enviarNoficacion')
 const enviarAlertaEmailCliente = require('../helpers/enviarAlertaEmailCliente')
 
-
 const registrarNegociacion = async (req, res) => {
 
     const { numFactura } = req.body
@@ -34,8 +33,6 @@ const registrarNegociacion = async (req, res) => {
         nuevaNegociacion.total = req.body.total || nuevaNegociacion.total 
         nuevaNegociacion.estado = req.body.estado || nuevaNegociacion.estado 
         nuevaNegociacion.fechaFacturacion = req.body.fechaFacturacion || nuevaNegociacion.fechaFacturacion 
-
-
 
         await nuevaNegociacion.save();
         res.json({ message: 'Negociación agregada correctamente' });
