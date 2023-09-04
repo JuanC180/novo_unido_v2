@@ -4,7 +4,6 @@ const cors = require('cors')
 const fileUpload = require('express-fileupload');
 const app = express()
 
-
 // app.use(fileUpload());
 app.use(fileUpload({
   useTempFiles : true,
@@ -21,7 +20,6 @@ dotenv.config()
 
 //Importación del archivo de rutas
 const rutaCliente = require('./routes/ClienteRoutes')
-const rutaPlandepago = require('./routes/PlandepagoRoutes')
 const rutaProducto = require('./routes/ProductoRoutes')
 const rutaNegociacion = require('./routes/NegociacionRoutes')
 const usuarioRouter = require('./routes/usuarioRouter.js')
@@ -32,7 +30,6 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
 
 app.use('/api/cliente', rutaCliente)
-app.use('/api/plandepago', rutaPlandepago)
 app.use('/api/producto', rutaProducto)
 app.use('/api/negociacion', rutaNegociacion)
 app.use('/api/usuarios', usuarioRouter)

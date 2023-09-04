@@ -1,25 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Modal from 'react-modal';
-import { FaTimes } from 'react-icons/fa'
+import { FaTimes } from 'react-icons/fa';
 import { isValid, format, parseISO } from 'date-fns';
 
 const PlandepagoIndividual = ({ plandePago }) => {
-    const { _id } = plandePago; // Obtén el _id del objeto cliente
+    const { _id } = plandePago;
     const { id } = useParams();
-    const [mostrarDetalles, setMostrarDetalles] = useState(false); // Estado para controlar la ventana emergente
+    const [mostrarDetalles, setMostrarDetalles] = useState(false);
     const [dataNegociaciones, setDataNegociaciones] = useState([]);
 
     useEffect(() => {
-        const url = `negociacion/obtenerNegociaciones`;
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/${url}`)
-            .then(res => res.json())
-            .then(data => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/negociacion/obtenerNegociaciones`);
+                const data = await response.json();
+                console.log(data)
                 setDataNegociaciones(data);
-            })
-            .catch(err => {
-                console.log(err);
-            });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        fetchData();
     }, []);
 
     const isCuotaProximaAVencerse = (cuota) => {
@@ -50,19 +52,20 @@ const PlandepagoIndividual = ({ plandePago }) => {
 
     const closeModal = () => {
         setMostrarDetalles(false);
-        console.log("Modal cerrado"); // Puedes agregar un mensaje para verificar si se ejecutó correctamente
     };
 
     return (
         <>
-            {dataNegociaciones.map(negociacion => (
-                negociacion.detalleCuotas.some(isCuotaProximaAVencerse) && (
+            {dataNegociaciones
+                .filter(negociacion => negociacion.detalleCuotas.some(isCuotaProximaAVencerse))
+                .map(negociacion => (
                     <tr key={negociacion._id}>
                         <td>{negociacion.cliente}</td>
                         <td>{negociacion.numFactura}</td>
                         <td>
-                            {negociacion.detalleCuotas.map(cuota => (
-                                isCuotaProximaAVencerse(cuota) && (
+                            {negociacion.detalleCuotas
+                                .filter(isCuotaProximaAVencerse)
+                                .map(cuota => (
                                     <span key={cuota.fecha}>
                                         {isValid(parseISO(cuota.fecha)) ? (
                                             format(new Date(cuota.fecha), 'dd/MM/yyyy')
@@ -70,24 +73,27 @@ const PlandepagoIndividual = ({ plandePago }) => {
                                             'Fecha inválida'
                                         )}
                                     </span>
-                                )
-                            ))}
+                                ))}
                         </td>
                         <td>
-                            {negociacion.detalleCuotas.map(cuota => (
-                                isCuotaProximaAVencerse(cuota) && (
+                            {negociacion.detalleCuotas
+                                .filter(isCuotaProximaAVencerse)
+                                .map(cuota => (
                                     <span key={cuota.fecha}>
                                         $ {parseFloat(cuota.valor).toLocaleString('es-CO')}
                                     </span>
-                                )
-                            ))}
+                                ))}
                         </td>
                         <td style={{ textAlign: 'center' }}>
                             <Link onClick={() => toggleDetalles(negociacion._id)}>
-                                <i className="fa fa-circle-info" title="Detalle" style={{ marginRight: 10, color: '#212529', fontSize: 22 }} />
+                                <i
+                                    className="fa fa-circle-info"
+                                    title="Detalle"
+                                    style={{ marginRight: 10, color: '#212529', fontSize: 22 }}
+                                />
                             </Link>
                         </td>
-                        <Modal isOpen={negociacion.mostrarDetalles} onRequestClose={closeModal} style={customStyles}>
+                    <Modal isOpen={negociacion.mostrarDetalles} onRequestClose={closeModal} style={customStyles}>
                             <Link onClick={() => toggleDetalles(negociacion._id)}>
                                 <FaTimes size={35} style={{ color: 'black', float: 'right' }} />
                             </Link>
@@ -160,10 +166,9 @@ const PlandepagoIndividual = ({ plandePago }) => {
                             </table>
                         </Modal>
                     </tr>
-                )
-            ))}
+                ))}
         </>
     );
-};
+}
 
 export default PlandepagoIndividual;

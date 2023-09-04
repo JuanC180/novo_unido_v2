@@ -79,7 +79,7 @@ const schemaCliente = new Schema({
         type: String,
         default: 'Activo',
         trim: true
-    },
+    }
 })
 
 const ModeloCliente = mongoose.model('Cliente', schemaCliente)

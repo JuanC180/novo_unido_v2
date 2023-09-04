@@ -9,7 +9,7 @@ const CrearNegociacion = () => {
     const navigate = useNavigate();
 
     const [dataclientes, setDataClientes] = useState([]);
-    const [selectedCliente, setSelectedCliente] = useState({ _id: '', nombre: ''});
+    const [selectedCliente, setSelectedCliente] = useState({ _id: '', nombre: '' });
     // const [selectedCliente, setSelectedCliente] = useState('');
     const [numFactura, setNumFactura] = useState('');
     const [dataproductos, setDataProductos] = useState([]);
@@ -297,7 +297,7 @@ const CrearNegociacion = () => {
                                 <div className="mb-3 w-100">
                                     <label className="form-label fw-bold">Cliente</label>
                                     <select id="cliente" className="form-select" value={selectedCliente} onChange={(e) => setSelectedCliente(e.target.value)}>
-                                        
+
                                         <option value="">Seleccionar cliente</option>
                                         {dataclientes.map(cliente => (
                                             // <option key={cliente.id} value={cliente.nombre}>
@@ -410,7 +410,7 @@ const CrearNegociacion = () => {
                                                         setPrecioVenta(nuevosValores);
                                                     }}
                                                 />
-                                                {precioVentaError[index] && <div className="invalid-feedback">El precio de venta debe ser al menos $33.000.000.</div>}
+                                                {precioVentaError[index] && <div className="invalid-feedback">El precio de venta debe ser mínimo $33.000.000.</div>}
                                             </div>
                                         ))
                                     ) : (
@@ -439,14 +439,16 @@ const CrearNegociacion = () => {
                                                 const sanitizedText = inputText.replace(/[^a-zA-Z0-9]/g, '');
                                                 setNumFactura(sanitizedText);
 
-                                                if (sanitizedText.length < 6) {
-                                                    setNumFacturaError(true);
-                                                } else {
+                                                // Usar una expresión regular para validar la factura
+                                                const facturaRegex = /^[a-zA-Z0-9]{6}$/;
+                                                if (facturaRegex.test(sanitizedText)) {
                                                     setNumFacturaError(false);
+                                                } else {
+                                                    setNumFacturaError(true);
                                                 }
                                             }}
                                         />
-                                        {numFacturaError && <div className="invalid-feedback">El número de factura debe tener al menos 6 caracteres.</div>}
+                                        {numFacturaError && <div className="invalid-feedback">El número de factura debe tener dos letras seguidas de cuatro números.</div>}
                                     </div>
                                     <div className="mb-3 w-100">
                                         <label className="form-label fw-bold">Tasa</label>
@@ -514,7 +516,7 @@ const CrearNegociacion = () => {
                                         <label className="form-label fw-bold">Total</label>
                                         <input
                                             type="text"
-                                            className={`form-control ${totalError ? 'is-invalid' : ''}`}
+                                            className={`form-control ${totalError || (total && parseFloat(total) < 33000000) ? 'is-invalid' : ''}`}
                                             placeholder="$"
                                             required
                                             maxLength={9}
@@ -529,7 +531,7 @@ const CrearNegociacion = () => {
                                                 }
                                             }}
                                         />
-                                        {totalError && <div className="invalid-feedback">El total debe tener al menos 8 caracteres.</div>}
+                                        {totalError && parseFloat(total) < 33000000 && <div className="invalid-feedback">El total debe ser mínimo $33.000.000</div>}
                                     </div>
 
                                     <div className="mb-3 w-100">
@@ -537,8 +539,12 @@ const CrearNegociacion = () => {
                                         <input type="text" className="form-control" }} /> */}
                                         {/* <label className="form-label fw-bold"></label>
                                         <input type="text" className="form-control" }} /> */}
+                                        {/* <label className="form-label fw-bold"></label>
+                                        <input type="text" className="form-control" }} /> */}
+                                        {/* <label className="form-label fw-bold"></label>
+                                        <input type="text" className="form-control" }} /> */}
+                                        <br />
                                     </div>
-
                                     <div className="mb-3 w-100">
                                         <label className="form-label fw-bold">Cantidad</label>
                                         {selectedProductos.length > 0 ? (
